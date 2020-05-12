@@ -6,7 +6,7 @@ on:
       - gitlab-cleanup
     paths:
       - charts/gitlab-delete-stale-projects/**
-      - .github/**
+      - .github/workflows/gitlab-del-projects-container-build.yaml
 
 jobs:
   build-gitlab-delete-project:
