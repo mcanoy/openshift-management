@@ -1,0 +1,45 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  labels:
+    app: {{ .Values.name }}
+  name: {{ .Values.name }}
+spec:
+  schedule: "{{ .Values.cron.schedule }}"
+  concurrencyPolicy: "Forbid"
+  successfulJobsHistoryLimit: {{ .Values.cron.historyLimit }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+            env:
+            - name: LOG_LEVEL
+              value: "{{ .Values.env.logLevel }}"
+            - name: DELETE_AFTER_HOURS
+              value: "{{ .Values.env.deleteAfterInHours }}"
+            - name: DRY_RUN
+              value: "{{ .Values.env.dryRun }}"
+            - name: GITLAB_API_URL
+              valueFrom:
+                secretKeyRef:
+                  key: GITLAB_API_URL
+                  name: {{ .Values.env.secret.name }}
+            - name: PARENT_GROUP_ID
+              valueFrom:
+                secretKeyRef:
+                  key: RESIDENCIES_PARENT_REPOSITORIES_ID
+                  name: {{ .Values.env.secret.name }}
+            - name: GIT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: GITLAB_PERSONAL_ACCESS_TOKEN
+                  name: {{ .Values.env.secret.name }}
+            imagePullPolicy: Always
+            name: {{ .Values.name }}
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+          restartPolicy: OnFailure
+status: {}

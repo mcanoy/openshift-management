@@ -1,0 +1,11 @@
+{{- if .Values.generateSecret }}
+apiVersion: v1
+stringData:
+  GITLAB_API_URL: {{ .Values.env.secret.gitlabApiUrl }}
+  GITLAB_PERSONAL_ACCESS_TOKEN: {{ .Values.env.secret.personalAccessToken }}
+  RESIDENCIES_PARENT_REPOSITORIES_ID: "{{ .Values.env.secret.parentRepoId }}"
+kind: Secret
+metadata:
+  name: {{ .Values.env.secret.name }}
+type: Opaque
+{{- end }}
